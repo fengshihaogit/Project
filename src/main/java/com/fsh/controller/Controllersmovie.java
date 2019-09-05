@@ -53,7 +53,7 @@ public class Controllersmovie {
 	
 	@RequestMapping(value="/gettypesAll")
 	@ResponseBody
-	public Object gettypesAllss(){
+	public Object gettypesAllsss(){
 		
 		List<Map<String, Object>> gettypesAll = ser.gettypesAll();
 		System.out.println(gettypesAll.toString());
