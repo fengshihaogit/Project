@@ -37,10 +37,10 @@ public class Controllersmovie {
 		map.put("mname", mname);
 		
 		PageHelper.startPage(cpage, 3);
-		List<Map<String, Object>> getmovieAll = ser.getmovieAll(map);
+		List<Map<String, Object>> getmovie = ser.getmovieAll(map);
 		
-		PageInfo<Map<String, Object>> pageInfo = new PageInfo<Map<String, Object>>(getmovieAll);
-		model.addAttribute("getmovieAll", getmovieAll);
+		PageInfo<Map<String, Object>> pageInfo = new PageInfo<Map<String, Object>>(getmovie);
+		model.addAttribute("getmovieAll", getmovie);
 		model.addAttribute("page", pageInfo);
 		model.addAttribute("mname", mname);
 		return "list";
@@ -53,7 +53,7 @@ public class Controllersmovie {
 	
 	@RequestMapping(value="/gettypesAll")
 	@ResponseBody
-	public Object gettypesAll(){
+	public Object gettypesAllss(){
 		
 		List<Map<String, Object>> gettypesAll = ser.gettypesAll();
 		System.out.println(gettypesAll.toString());
