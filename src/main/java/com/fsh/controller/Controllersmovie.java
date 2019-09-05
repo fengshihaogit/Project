@@ -44,7 +44,6 @@ public class Controllersmovie {
 		model.addAttribute("page", pageInfo);
 		model.addAttribute("mname", mname);
 		model.addAttribute("mname", mname);
-		model.addAttribute("mname", mname);
 		return "list";
 	}
 	
