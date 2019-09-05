@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	 http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx
+	 http://www.springframework.org/schema/tx/spring-tx.xsd">
+	<!-- 扫描业务层和数据层组件 -->
+	<context:component-scan base-package="com.fsh" />
+
+
+	<!-- 数据源 数据库连接池 -->
+	<bean name="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="url" value="jdbc:mysql:///1705b?characterEncoding=utf-8"></property>
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="root"></property>
+	</bean>
+
+	<!-- 创建会话工厂 -->
+	<bean name="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 引入数据源 -->
+		<property name="dataSource" ref="dataSource"></property>
+
+		<!-- 别名的包配置 -->
+		<property name="typeAliasesPackage" value="com.fsh.bean"></property>
+
+		<!-- 通过mapper扫描所有的mybatis的sql映射文件 -->
+		<property name="mapperLocations" value="classpath:com/fsh/mapper/*.xml"></property>
+
+		<!-- 整合mybatis的分页插件 -->
+		<property name="plugins">
+			<array>
+				<bean class="com.github.pagehelper.PageHelper">
+					<property name="properties">
+						<props>
+							<!-- 方言 -->
+							<prop key="dialect">mysql</prop>
+							<!-- 分页合理化 -->
+							<prop key="reasonable">true</prop>
+						</props>
+					</property>
+				</bean>
+			</array>
+		</property>
+
+	</bean>
+
+	<!-- 接口扫描 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 给接口对象注入工厂sqlSessionFactory -->
+		<property name="sqlSessionFactory" ref="sqlSessionFactory"></property>
+		<!-- 扫描mapper的接口 -->
+		<property name="basePackage" value="com.fsh.mapper"></property>
+	</bean>
+	
+	<!-- 事务管理器：切面  典型的环绕通知 -->
+	 <bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+			<property name="dataSource" ref="dataSource"></property>
+	</bean> 
+
+	<!-- 事务的注解驱动 -->
+	<!-- <tx:annotation-driven transaction-manager="transactionManager"/> -->
+
+	<!-- 切入点的表达式 -->
+	 <aop:config> 
+			<!-- 事务管理的切入点所在的包 -->
+		 <aop:pointcut expression="execution(* com.fsh.service.*.*(..))" id="pointcut"/>
+		<aop:advisor advice-ref="txAdvisor" pointcut-ref="pointcut"/>
+	</aop:config>
+	
+	<!-- 事务的增强规则 -->
+	 <tx:advice id="txAdvisor" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="add*"/>
+			<tx:method name="save*"/>
+			<tx:method name="insert*"/>
+			<tx:method name="update*"/>
+			<tx:method name="upd*"/>
+			<tx:method name="del*"/>
+			<tx:method name="delete*"/>
+			<tx:method name="*" read-only="true"/>
+		</tx:attributes>
+	</tx:advice>
+
+
+</beans>

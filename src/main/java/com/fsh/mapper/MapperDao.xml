@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace 命名空间 早期版本是可选的 现在是必须的 可以是随意的名称 但是最好是全限定名称 -->
+<mapper namespace="com.fsh.mapper.MapperDao">
+	
+	<select id="getmovieAll" resultType="map" parameterType="map">
+		SELECT m.*,t.tname FROM `93movie` m LEFT JOIN
+		93types t on m.tid = t.tid 
+		<where>
+			<if test="mname != null and mname != ''">
+				and m.mname like concat('%',#{mname},'%')
+			</if>
+		</where>
+	</select>
+
+	<select id="gettypesAll" resultType="map">
+		SELECT * FROM `93types`
+	</select>
+	
+	<insert id="addMovie" parameterType="movie">
+		insert into 93movie (mname,content,daoyan,mdate,tid) 
+		values(#{mname},#{content},#{daoyan},#{mdate},#{tid})
+	</insert>
+	
+	<select id="getById" resultType="map" parameterType="int">
+		select * from 93movie where mid = #{mid}
+	</select>
+	
+	<update id="updateMovie" parameterType="movie">
+		update 93movie set mname= #{mname},content = #{content},daoyan= #{daoyan},mdate= #{mdate},tid = #{tid} where mid = #{mid}
+	</update>
+	
+	<delete id="delete" >
+		delete from 93movie where mid in
+		<foreach collection="array" item="mid" open="(" separator="," close=")">
+			#{mid}
+		</foreach>
+	</delete>
+</mapper>
